@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ Special Message For You ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;600&family=Sacramento&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --rose-pink: #ff6b9d;
+            --deep-rose: #c44569;
+            --soft-cream: #fff5f7;
+            --gold-accent: #ffd700;
+            --dark-text: #2c1810;
+            --shadow-soft: rgba(196, 69, 105, 0.2);
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe3e9 50%, #ffd4e0 100%);
+            color: var(--dark-text);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Authentication Screen */
+        #authScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        #authScreen.hidden {
+            display: none;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 30px;
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .auth-heart {
+            font-size: 80px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+        }
+
+        .auth-title {
+            font-family: 'Sacramento', cursive;
+            font-size: 3rem;
+            color: var(--deep-rose);
+            margin-bottom: 15px;
+        }
+
+        .auth-subtitle {
+            font-size: 1.3rem;
+            color: var(--dark-text);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .auth-question {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--deep-rose);
+            margin: 30px 0 20px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .auth-btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-family: 'Playfair Display', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, var(--rose-pink), var(--deep-rose));
+            color: white;
+            box-shadow: 0 8px 20px var(--shadow-soft);
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px var(--shadow-soft);
+        }
+
+        .btn-no {
+            background: #f0f0f0;
+            color: #666;
+            position: relative;
+        }
+
+        .btn-no:hover {
+            background: #e0e0e0;
+        }
+
+        .wrong-answer {
+            color: var(--deep-rose);
+            font-size: 1.1rem;
+            margin-top: 15px;
+            font-style: italic;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .floating-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .mini-heart {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0;
+            animation: floatHeart 4s ease-in infinite;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .mini-heart:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .mini-heart:nth-child(2) { left: 30%; animation-delay: 0.5s; }
+        .mini-heart:nth-child(3) { left: 50%; animation-delay: 1s; }
+        .mini-heart:nth-child(4) { left: 70%; animation-delay: 1.5s; }
+        .mini-heart:nth-child(5) { left: 90%; animation-delay: 2s; }
+
+        /* Main Content */
+        #mainContent {
+            display: none;
+        }
+
+        #mainContent.show {
+            display: block;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .heart-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: var(--rose-pink);
+            opacity: 0;
+            animation: float-up 8s ease-in infinite;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .heart:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 7s; }
+        .heart:nth-child(2) { left: 20%; animation-delay: 1.5s; animation-duration: 8s; }
+        .heart:nth-child(3) { left: 30%; animation-delay: 3s; animation-duration: 6s; }
+        .heart:nth-child(4) { left: 40%; animation-delay: 0.5s; animation-duration: 9s; }
+        .heart:nth-child(5) { left: 50%; animation-delay: 2s; animation-duration: 7s; }
+        .heart:nth-child(6) { left: 60%; animation-delay: 1s; animation-duration: 8s; }
+        .heart:nth-child(7) { left: 70%; animation-delay: 2.5s; animation-duration: 6.5s; }
+        .heart:nth-child(8) { left: 80%; animation-delay: 0.8s; animation-duration: 7.5s; }
+        .heart:nth-child(9) { left: 90%; animation-delay: 1.8s; animation-duration: 8.5s; }
+        .heart:nth-child(10) { left: 15%; animation-delay: 3.5s; animation-duration: 7s; }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            animation: fadeInDown 1.2s ease-out;
+        }
+
+        .main-title {
+            font-family: 'Sacramento', cursive;
+            font-size: clamp(3rem, 8vw, 6rem);
+            color: var(--deep-rose);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px var(--shadow-soft);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: var(--dark-text);
+            font-weight: 300;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+        }
+
+        .date-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--rose-pink), var(--deep-rose));
+            color: white;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 8px 20px var(--shadow-soft);
+        }
+
+        .love-message {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 50px 40px;
+            margin: 40px auto;
+            max-width: 800px;
+            box-shadow: 0 20px 60px var(--shadow-soft);
+            border: 2px solid rgba(255, 107, 157, 0.2);
+            animation: fadeInUp 1s ease-out 0.3s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .love-message::before {
+            content: '❤️';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            font-size: 150px;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+
+        .love-message h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--deep-rose);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .love-message p {
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            line-height: 1.8;
+            color: var(--dark-text);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .signature {
+            font-family: 'Sacramento', cursive;
+            font-size: 2.5rem;
+            color: var(--deep-rose);
+            text-align: right;
+            margin-top: 30px;
+        }
+
+        .gallery-section {
+            margin: 60px auto;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .gallery-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--deep-rose);
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .slideshow-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 25px 70px var(--shadow-soft);
+            border: 3px solid rgba(255, 107, 157, 0.3);
+        }
+
+        .slide {
+            display: none;
+            position: relative;
+            animation: fadeSlide 0.8s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .slide img {
+            width: 100%;
+    height: auto;
+    border-radius: 25px;
+        }
+
+        .slide-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 30px 20px 20px;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            margin-top: -30px;
+            padding: 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            background: rgba(196, 69, 105, 0.7);
+            user-select: none;
+            z-index: 10;
+        }
+
+        .next { right: 15px; }
+        .prev { left: 15px; }
+
+        .prev:hover, .next:hover {
+            background: var(--deep-rose);
+            transform: scale(1.1);
+        }
+
+        .dots-container {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            max-width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .dot {
+            cursor: pointer;
+            height: 8px;
+            width: 8px;
+            margin: 0 2px;
+            background-color: #ddd;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: var(--deep-rose);
+            transform: scale(1.3);
+        }
+
+        .dot:hover {
+            background-color: var(--rose-pink);
+        }
+
+        .slide-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-heart {
+            font-size: 3rem;
+            color: var(--rose-pink);
+            margin-bottom: 15px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        .footer-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--dark-text);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                padding: 40px 30px;
+            }
+
+            .auth-title {
+                font-size: 2.5rem;
+            }
+
+            .auth-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .auth-question {
+                font-size: 1.3rem;
+            }
+
+            .auth-btn {
+                padding: 12px 25px;
+                font-size: 1.1rem;
+            }
+
+            .love-message {
+                padding: 30px 25px;
+                margin: 20px;
+            }
+
+            .slideshow-container {
+                margin: 0 10px;
+            }
+
+            .slide img {
+                max-height: 400px;
+            }
+
+            .prev, .next {
+                padding: 12px;
+                font-size: 18px;
+            }
+
+            header {
+                padding: 40px 20px 30px;
+            }
+
+            .dot {
+                height: 6px;
+                width: 6px;
+                margin: 0 2px;
+            }
+        }
+
+        /* Hidden Audio Element */
+        #bgAudio {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden Audio for Auto-Play -->
+    <audio id="bgAudio" loop>
+        <source src="Audio/Tu Mile Dil Khile Stebin Ben 320 Kbps.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Authentication Screen -->
+    <div id="authScreen">
+        <div class="floating-hearts">
+            <div class="mini-heart">💕</div>
+            <div class="mini-heart">❤️</div>
+            <div class="mini-heart">💖</div>
+            <div class="mini-heart">💗</div>
+            <div class="mini-heart">💕</div>
+        </div>
+        
+        <div class="auth-container">
+            <div class="auth-heart">💝</div>
+            <h1 class="auth-title">Wait a minute!</h1>
+            <p class="auth-subtitle">
+                Koi special person ke liye kuch bahut special hai! 🎁<br>
+                Par pehle ek chhota sa sawaal...
+            </p>
+            
+            <p class="auth-question">Kya aap pyaar se accept karti hain ki...</p>
+            <p class="auth-subtitle" style="font-size: 1.5rem; font-weight: 600; color: var(--deep-rose);">
+                "I LOVE YOU" ❤️
+            </p>
+            
+            <div class="auth-buttons">
+                <button class="auth-btn btn-yes" onclick="acceptLove()">
+                    Haan! Main bhi tumse pyaar karti hoon! 💕
+                </button>
+                <button class="auth-btn btn-no" id="noBtn" onclick="rejectLove()">
+                    Nahi
+                </button>
+            </div>
+            
+            <p class="wrong-answer" id="wrongMsg" style="display: none;"></p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+        <div class="heart-container">
+            <div class="heart">❤️</div><div class="heart">💕</div><div class="heart">💖</div><div class="heart">❤️</div><div class="heart">💗</div>
+            <div class="heart">💕</div><div class="heart">❤️</div><div class="heart">💖</div><div class="heart">💕</div><div class="heart">❤️</div>
+        </div>
+
+        <div class="container">
+            <header>
+                <h1 class="main-title">Happy Valentine's Day</h1>
+                <p class="subtitle">TO MY BEAUTIFUL WIFE</p>
+                <div class="date-badge">14th February 2026</div>
+            </header>
+
+            <section class="love-message">
+                <h2>To My Beloved Wife,</h2>
+                <p>
+                    You are not just my wife, you are my soulmate, my best friend, and the love of my life. 
+                    Every day with you feels like a blessing, and I thank God for bringing you into my world.
+                </p>
+                <p>
+                    From the moment I saw you, I knew my heart had found its home. Your smile brightens my darkest days, 
+                    your laughter is the sweetest music to my ears, and your love gives me strength to face anything.
+                </p>
+                <p>
+                    Being your husband is the greatest honor of my life. These 88 photos capture our beautiful journey together. 
+                    Thank you for accepting my love! I promise to cherish you forever.
+                </p>
+                <p style="font-size: 1.4rem; color: var(--deep-rose); margin-top: 25px;">
+                    I love you more than words can ever express. ❤️
+                </p>
+                <div class="signature">Forever Yours, Your Loving Husband 💕</div>
+            </section>
+
+            <section class="gallery-section">
+                <h2 class="gallery-title">Our 88 Beautiful Memories Together 💕</h2>
+                
+                <div class="slideshow-container">
+                    <div class="slide-counter"><span id="currentSlide">1</span> / 88</div>
+                    
+                    <!-- Photo 1 - Bride (will be embedded) -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.23 PM.jpeg" alt="Memory 1">
+                        <div class="slide-caption">My forever Valentine - my beautiful bride who stole my heart 💕❤️</div>
+                    </div>
+
+                    <!-- Photo 2 - Couple (will be embedded) -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.24 PM (1).jpeg" alt="Memory 2">
+                        <div class="slide-caption">Every moment with you is more beautiful - I love you endlessly 🌅💖</div>
+                    </div>
+
+                    <!-- Photo 3 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.24 PM (2).jpeg" alt="Memory 3">
+                        <div class="slide-caption">Your smile is the reason my heart beats faster every single day 😊💕</div>
+                    </div>
+
+                    <!-- Photo 4 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.24 PM.jpeg" alt="Memory 4">
+                        <div class="slide-caption">Coffee dates with you are my favorite moments - pure bliss ☕❤️</div>
+                    </div>
+
+                    <!-- Photo 5 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.25 PM (1).jpeg" alt="Memory 5">
+                        <div class="slide-caption">Dancing through life with you is the greatest adventure ✨💑</div>
+                    </div>
+
+                    <!-- Photo 6 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.25 PM.jpeg" alt="Memory 6">
+                        <div class="slide-caption">Every journey with you becomes an unforgettable memory 🚗💖</div>
+                    </div>
+
+                    <!-- Photo 7 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.47 PM (1).jpeg" alt="Memory 7">
+                        <div class="slide-caption">You are my sunshine, my ocean breeze, my everything 🏖️☀️</div>
+                    </div>
+
+                    <!-- Photo 8 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.26 PM (2).jpeg" alt="Memory 8">
+                        <div class="slide-caption">Building beautiful memories with you, one moment at a time 💖✨</div>
+                    </div>
+
+                    <!-- Photo 9 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.26 PM.jpeg" alt="Memory 9">
+                        <div class="slide-caption">You and me, forever and always - my beautiful wife 💑❤️</div>
+                    </div>
+
+                    <!-- Photo 10 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.27 PM (1).jpeg" alt="Memory 10">
+                        <div class="slide-caption">Every moment with you is a blessing I cherish deeply 🌟💕</div>
+                    </div>
+
+                    <!-- Photo 11 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.27 PM (2).jpeg" alt="Memory 11">
+                        <div class="slide-caption">In your arms, I found my home and my happiness 🏡💕</div>
+                    </div>
+
+                    <!-- Photo 12 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.27 PM (3).jpeg" alt="Memory 12">
+                        <div class="slide-caption">You are the answer to all my prayers, my darling wife 🙏❤️</div>
+                    </div>
+
+                    <!-- Photo 13 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.27 PM.jpeg" alt="Memory 13">
+                        <div class="slide-caption">Your love makes me a better man every single day 💪💖</div>
+                    </div>
+
+                    <!-- Photo 14 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.28 PM (1).jpeg" alt="Memory 14">
+                        <div class="slide-caption">Together we can conquer anything - my partner, my love 👫✨</div>
+                    </div>
+
+                    <!-- Photo 15 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.28 PM (2).jpeg" alt="Memory 15">
+                        <div class="slide-caption">You make every ordinary day feel extraordinary 🌈💕</div>
+                    </div>
+
+                    <!-- Photo 16 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.28 PM.jpeg" alt="Memory 16">
+                        <div class="slide-caption">My heart belongs to you, now and forever ❤️🔒</div>
+                    </div>
+
+                    <!-- Photo 17 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.29 PM (1).jpeg" alt="Memory 17">
+                        <div class="slide-caption">Falling in love with you more each day, my beautiful wife 😍💖</div>
+                    </div>
+
+                    <!-- Photo 18 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.29 PM (2).jpeg" alt="Memory 18">
+                        <div class="slide-caption">You are my dream come true, my soulmate 🌙✨</div>
+                    </div>
+
+                    <!-- Photo 19 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.29 PM.jpeg" alt="Memory 19">
+                        <div class="slide-caption">Thank you for choosing me to be your forever 💍💕</div>
+                    </div>
+
+                    <!-- Photo 20 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.30 PM (1).jpeg" alt="Memory 20">
+                        <div class="slide-caption">With you, I've found paradise on earth 🌺❤️</div>
+                    </div>
+
+                    <!-- Photo 21 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.30 PM (2).jpeg" alt="Memory 21">
+                        <div class="slide-caption">You are my greatest blessing and my biggest treasure 💎💖</div>
+                    </div>
+
+                    <!-- Photo 22 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.30 PM.jpeg" alt="Memory 22">
+                        <div class="slide-caption">Every love story is beautiful, but ours is my favorite 📖💕</div>
+                    </div>
+
+                    <!-- Photo 23 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.31 PM (1).jpeg" alt="Memory 23">
+                        <div class="slide-caption">You light up my world like nobody else ⭐❤️</div>
+                    </div>
+
+                    <!-- Photo 24 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.31 PM (2).jpeg" alt="Memory 24">
+                        <div class="slide-caption">Being married to you is the best decision I ever made 💑💖</div>
+                    </div>
+
+                    <!-- Photo 25 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.31 PM.jpeg" alt="Memory 25">
+                        <div class="slide-caption">You complete me in every possible way, my love 🧩❤️</div>
+                    </div>
+
+                    <!-- Photo 26 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.32 PM (1).jpeg" alt="Memory 26">
+                        <div class="slide-caption">My heart skips a beat every time I see you 💓✨</div>
+                    </div>
+
+                    <!-- Photo 27 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.32 PM (2).jpeg" alt="Memory 27">
+                        <div class="slide-caption">You are my today and all of my tomorrows 🌅💕</div>
+                    </div>
+
+                    <!-- Photo 28 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.32 PM.jpeg" alt="Memory 28">
+                        <div class="slide-caption">Growing old with you is my favorite adventure 👴👵❤️</div>
+                    </div>
+
+                    <!-- Photo 29 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.33 PM (1).jpeg" alt="Memory 29">
+                        <div class="slide-caption">You are the reason I believe in true love 💖✨</div>
+                    </div>
+
+                    <!-- Photo 30 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.33 PM (2).jpeg" alt="Memory 30">
+                        <div class="slide-caption">Forever grateful to call you my wife - I love you endlessly 💕♾️</div>
+                    </div>
+
+                    <!-- Photo 31 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.33 PM.jpeg" alt="Memory 31">
+                        <div class="slide-caption">Your love is the melody that makes my heart sing 🎵❤️</div>
+                    </div>
+
+                    <!-- Photo 32 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.34 PM (1).jpeg" alt="Memory 32">
+                        <div class="slide-caption">With you, every moment becomes a precious memory 📸💕</div>
+                    </div>
+
+                    <!-- Photo 33 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.34 PM (2).jpeg" alt="Memory 33">
+                        <div class="slide-caption">You are my safe place, my comfort, my everything 🏠💖</div>
+                    </div>
+
+                    <!-- Photo 34 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.34 PM.jpeg" alt="Memory 34">
+                        <div class="slide-caption">Loving you is the easiest thing I've ever done ❤️😊</div>
+                    </div>
+
+                    <!-- Photo 35 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.35 PM (1).jpeg" alt="Memory 35">
+                        <div class="slide-caption">You make my world brighter just by being in it 🌟💕</div>
+                    </div>
+
+                    <!-- Photo 36 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.35 PM (2).jpeg" alt="Memory 36">
+                        <div class="slide-caption">My favorite place is next to you 👫❤️</div>
+                    </div>
+
+                    <!-- Photo 37 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.35 PM.jpeg" alt="Memory 37">
+                        <div class="slide-caption">You are my happily ever after 👑💖</div>
+                    </div>
+
+                    <!-- Photo 38 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.36 PM (1).jpeg" alt="Memory 38">
+                        <div class="slide-caption">Thank you for being my partner in this beautiful journey 🛤️💕</div>
+                    </div>
+
+                    <!-- Photo 39 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.36 PM.jpeg" alt="Memory 39">
+                        <div class="slide-caption">Your love completes my soul 🌙❤️</div>
+                    </div>
+
+                    <!-- Photo 40 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.37 PM (1).jpeg" alt="Memory 40">
+                        <div class="slide-caption">I fall in love with you over and over again 💕🔄</div>
+                    </div>
+
+                    <!-- Photo 41 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.37 PM (2).jpeg" alt="Memory 41">
+                        <div class="slide-caption">You are my greatest adventure and my sweetest love 🗺️❤️</div>
+                    </div>
+
+                    <!-- Photo 42 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.37 PM (3).jpeg" alt="Memory 42">
+                        <div class="slide-caption">Every day with you is a gift I treasure 🎁💖</div>
+                    </div>
+
+                    <!-- Photo 43 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.37 PM.jpeg" alt="Memory 43">
+                        <div class="slide-caption">You are the love of my life and my best friend 👫💕</div>
+                    </div>
+
+                    <!-- Photo 44 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.38 PM (1).jpeg" alt="Memory 44">
+                        <div class="slide-caption">My heart found its home when I found you 🏡❤️</div>
+                    </div>
+
+                    <!-- Photo 45 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.38 PM (2).jpeg" alt="Memory 45">
+                        <div class="slide-caption">You make me believe in magic and miracles ✨💖</div>
+                    </div>
+
+                    <!-- Photo 46 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.38 PM.jpeg" alt="Memory 46">
+                        <div class="slide-caption">Loving you is my favorite thing to do 💕😊</div>
+                    </div>
+
+                    <!-- Photo 47 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.39 PM (1).jpeg" alt="Memory 47">
+                        <div class="slide-caption">You are my sunshine on cloudy days ☀️💖</div>
+                    </div>
+
+                    <!-- Photo 48 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.39 PM (2).jpeg" alt="Memory 48">
+                        <div class="slide-caption">With you, I am home 🏠❤️</div>
+                    </div>
+
+                    <!-- Photo 49 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.39 PM.jpeg" alt="Memory 49">
+                        <div class="slide-caption">You are my forever and always 💍💕</div>
+                    </div>
+
+                    <!-- Photo 50 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.40 PM.jpeg" alt="Memory 50">
+                        <div class="slide-caption">Thank you for making every day special 🌟❤️</div>
+                    </div>
+
+                    <!-- Photo 51 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.41 PM (1).jpeg" alt="Memory 51">
+                        <div class="slide-caption">You are the best thing that ever happened to me 💖✨</div>
+                    </div>
+
+                    <!-- Photo 52 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.41 PM.jpeg" alt="Memory 52">
+                        <div class="slide-caption">My love for you grows stronger every day 📈❤️</div>
+                    </div>
+
+                    <!-- Photo 53 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.42 PM (1).jpeg" alt="Memory 53">
+                        <div class="slide-caption">You are my heart, my soul, my everything 💕🌟</div>
+                    </div>
+
+                    <!-- Photo 54 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.42 PM (2).jpeg" alt="Memory 54">
+                        <div class="slide-caption">Being with you feels like a beautiful dream 💭❤️</div>
+                    </div>
+
+                    <!-- Photo 55 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.42 PM.jpeg" alt="Memory 55">
+                        <div class="slide-caption">You are my perfect match 🧩💖</div>
+                    </div>
+
+                    <!-- Photo 56 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.43 PM (1).jpeg" alt="Memory 56">
+                        <div class="slide-caption">Thank you for loving me unconditionally 💕🙏</div>
+                    </div>
+
+                    <!-- Photo 57 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.43 PM (2).jpeg" alt="Memory 57">
+                        <div class="slide-caption">You make my heart smile 😊❤️</div>
+                    </div>
+
+                    <!-- Photo 58 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.43 PM.jpeg" alt="Memory 58">
+                        <div class="slide-caption">With you, life is an amazing adventure 🎢💖</div>
+                    </div>
+
+                    <!-- Photo 59 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.44 PM (1).jpeg" alt="Memory 59">
+                        <div class="slide-caption">You are my once in a lifetime 💕✨</div>
+                    </div>
+
+                    <!-- Photo 60 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.44 PM (2).jpeg" alt="Memory 60">
+                        <div class="slide-caption">Thank you for being you - perfect in every way 👸❤️</div>
+                    </div>
+
+                    <!-- Photo 61 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.44 PM.jpeg" alt="Memory 61">
+                        <div class="slide-caption">You are my favorite hello and hardest goodbye 👋💖</div>
+                    </div>
+
+                    <!-- Photo 62 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.45 PM (1).jpeg" alt="Memory 62">
+                        <div class="slide-caption">My world is better because you're in it 🌍❤️</div>
+                    </div>
+
+                    <!-- Photo 63 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.45 PM (2).jpeg" alt="Memory 63">
+                        <div class="slide-caption">You are my queen and I am your king 👑💕</div>
+                    </div>
+
+                    <!-- Photo 64 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.45 PM.jpeg" alt="Memory 64">
+                        <div class="slide-caption">Thank you for making me the happiest man alive 😊💖</div>
+                    </div>
+
+                    <!-- Photo 65 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.46 PM (1).jpeg" alt="Memory 65">
+                        <div class="slide-caption">You are my inspiration and my motivation 💪❤️</div>
+                    </div>
+
+                    <!-- Photo 66 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.46 PM (2).jpeg" alt="Memory 66">
+                        <div class="slide-caption">With you, I can face anything life throws at us 🛡️💕</div>
+                    </div>
+
+                    <!-- Photo 67 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.47 PM (1).jpeg" alt="Memory 67">
+                        <div class="slide-caption">You are my better half and my whole world 🌎💖</div>
+                    </div>
+
+                    <!-- Photo 68 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.47 PM (2).jpeg" alt="Memory 68">
+                        <div class="slide-caption">Thank you for sharing your life with me 🤝❤️</div>
+                    </div>
+
+                    <!-- Photo 69 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.47 PM.jpeg" alt="Memory 69">
+                        <div class="slide-caption">You are my heart's desire 💕🔥</div>
+                    </div>
+
+                    <!-- Photo 70 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.48 PM (1).jpeg" alt="Memory 70">
+                        <div class="slide-caption">Loving you is my superpower 💪💖</div>
+                    </div>
+
+                    <!-- Photo 71 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.48 PM (2).jpeg" alt="Memory 71">
+                        <div class="slide-caption">You are the reason I wake up smiling every day 😊☀️</div>
+                    </div>
+
+                    <!-- Photo 72 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.48 PM.jpeg" alt="Memory 72">
+                        <div class="slide-caption">Thank you for being my rock and my anchor ⚓❤️</div>
+                    </div>
+
+                    <!-- Photo 73 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.49 PM (1).jpeg" alt="Memory 73">
+                        <div class="slide-caption">You are my everything and more 💕✨</div>
+                    </div>
+
+                    <!-- Photo 74 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.49 PM (2).jpeg" alt="Memory 74">
+                        <div class="slide-caption">With you, I have found my forever 💍💖</div>
+                    </div>
+
+                    <!-- Photo 75 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.49 PM.jpeg" alt="Memory 75">
+                        <div class="slide-caption">You are my miracle and my blessing 🙏❤️</div>
+                    </div>
+
+                    <!-- Photo 76 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-14 at 1.09.50 AM.jpeg" alt="Memory 76">
+                        <div class="slide-caption">Thank you for making life beautiful 🌺💕</div>
+                    </div>
+
+                    <!-- Photo 77 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.50 PM (1).jpeg" alt="Memory 77">
+                        <div class="slide-caption">You are my heart's keeper 💖🔐</div>
+                    </div>
+
+                    <!-- Photo 78 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.50 PM.jpeg" alt="Memory 78">
+                        <div class="slide-caption">Loving you is the best part of my day 😊❤️</div>
+                    </div>
+
+                    <!-- Photo 79 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.51 PM (1).jpeg" alt="Memory 79">
+                        <div class="slide-caption">You are my sweetest addiction 💕🍭</div>
+                    </div>
+
+                    <!-- Photo 80 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.51 PM (2).jpeg" alt="Memory 80">
+                        <div class="slide-caption">Thank you for being my partner in crime 🕵️💖</div>
+                    </div>
+
+                    <!-- Photo 81 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.51 PM.jpeg" alt="Memory 81">
+                        <div class="slide-caption">You are my light in the darkness 💡❤️</div>
+                    </div>
+
+                    <!-- Photo 82 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.52 PM (1).jpeg" alt="Memory 82">
+                        <div class="slide-caption">With you, every day is Valentine's Day 💕📅</div>
+                    </div>
+
+                    <!-- Photo 83 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.52 PM (2).jpeg" alt="Memory 83">
+                        <div class="slide-caption">You are my favorite person in the whole world 🌍❤️</div>
+                    </div>
+
+                    <!-- Photo 84 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.52 PM.jpeg" alt="Memory 84">
+                        <div class="slide-caption">Thank you for making me believe in love again 💖✨</div>
+                    </div>
+
+                    <!-- Photo 85 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.53 PM (1).jpeg" alt="Memory 85">
+                        <div class="slide-caption">You are my destiny and my fate 🔮💕</div>
+                    </div>
+
+                    <!-- Photo 86 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.53 PM (2).jpeg" alt="Memory 86">
+                        
+                        <div class="slide-caption">Loving you makes me a better person 💪❤️</div>
+                    </div>
+
+                    <!-- Photo 87 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-13 at 10.05.53 PM.jpeg" alt="Memory 87">
+                        <div class="slide-caption">You are my wish come true 🌠💖</div>
+                    </div>
+
+                    <!-- Photo 88 -->
+                    <div class="slide">
+                        <img src="image/WhatsApp Image 2026-02-14 at 1.11.13 AM.jpeg" alt="Memory 88">
+                        <div class="slide-caption">Thank you for being the love of my life - Forever Valentine 💕👑</div>
+                    </div>
+
+
+                    <a class="prev" onclick="changeSlide(-1)">❮</a>
+                    <a class="next" onclick="changeSlide(1)">❯</a>
+                </div>
+
+                <div class="dots-container" id="dotsContainer"></div>
+            </section>
+
+            <footer>
+                <div class="footer-heart">❤️</div>
+                <p class="footer-text">To my beautiful wife - with all my love, today, tomorrow, and forever</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        let attempts = 0;
+        const funnyMessages = [
+            "Arre! Galat button daba diya lag raha hai! 😅",
+            "Oops! Mujhe lagta hai aapki ungli slip ho gayi! 😄",
+            "Nahi nahi, zaroor kuch gadbad hui! Try again! 💕",
+            "Dekho, 'Nahi' button ne mana kar diya! Sirf 'Haan' hi kaam karega! 😉",
+            "Tumhara dil 'Haan' keh raha hai, ungli 'Nahi' pe kaise gayi? 😊",
+            "Connection error! Sirf 'Haan' wala button kaam kar raha hai! 💖",
+            "System malfunction! 'Nahi' option temporarily disabled! 🤣",
+            "Arre arre! Ye button kharab ho gaya! Doosra try karo! 💕"
+        ];
+
+        const noBtn = document.getElementById('noBtn');
+        let noBtnMoved = false;
+
+        noBtn.addEventListener('mouseover', function() {
+            if (!noBtnMoved) {
+                const randomX = Math.random() * 200 - 100;
+                const randomY = Math.random() * 200 - 100;
+                noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                noBtnMoved = true;
+                
+                setTimeout(() => {
+                    noBtn.style.transform = 'translate(0, 0)';
+                    noBtnMoved = false;
+                }, 1000);
+            }
+        });
+
+        function rejectLove() {
+            attempts++;
+            const wrongMsg = document.getElementById('wrongMsg');
+            wrongMsg.style.display = 'block';
+            wrongMsg.textContent = funnyMessages[Math.min(attempts - 1, funnyMessages.length - 1)];
+            
+            noBtn.style.animation = 'shake 0.5s ease';
+            setTimeout(() => {
+                noBtn.style.animation = '';
+            }, 500);
+            
+            if (attempts >= 3) {
+                noBtn.disabled = true;
+                noBtn.style.opacity = '0.3';
+                noBtn.style.cursor = 'not-allowed';
+                wrongMsg.textContent = "Dekha! 'Nahi' button hi ban ho gaya! Ab sirf 'Haan' bolo! 😄💕";
+            }
+        }
+
+        function acceptLove() {
+            const authScreen = document.getElementById('authScreen');
+            authScreen.style.animation = 'fadeOut 0.8s ease-out';
+            
+            // Start music when accepted
+            const bgAudio = document.getElementById('bgAudio');
+            bgAudio.play().catch(err => {
+                console.log('Audio autoplay prevented:', err);
+            });
+            
+            setTimeout(() => {
+                authScreen.classList.add('hidden');
+                document.getElementById('mainContent').classList.add('show');
+                initializeDots();
+                startSlideshow();
+            }, 800);
+        }
+
+        // Slideshow functions
+        let slideIndex = 1;
+        let autoSlideTimer;
+        const totalSlides = 88;
+
+        function initializeDots() {
+            const dotsContainer = document.getElementById('dotsContainer');
+            for (let i = 1; i <= totalSlides; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'dot';
+                dot.onclick = function() { currentSlide(i); };
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function startSlideshow() {
+            showSlides(slideIndex);
+            startAutoSlide();
+        }
+
+        function changeSlide(n) {
+            clearTimeout(autoSlideTimer);
+            showSlides(slideIndex += n);
+            startAutoSlide();
+        }
+
+        function currentSlide(n) {
+            clearTimeout(autoSlideTimer);
+            showSlides(slideIndex = n);
+            startAutoSlide();
+        }
+
+        function showSlides(n) {
+            let slides = document.getElementsByClassName("slide");
+            let dots = document.getElementsByClassName("dot");
+            
+            if (n > slides.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = slides.length }
+            
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].classList.remove("active");
+            }
+            
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].classList.remove("active");
+            }
+            
+            slides[slideIndex - 1].classList.add("active");
+            dots[slideIndex - 1].classList.add("active");
+            
+            document.getElementById('currentSlide').textContent = slideIndex;
+        }
+
+        function startAutoSlide() {
+            autoSlideTimer = setTimeout(() => {
+                slideIndex++;
+                showSlides(slideIndex);
+                startAutoSlide();
+            }, 5000);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+
+        // Touch swipe
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchEndX < touchStartX - 50) {
+                changeSlide(1);
+            }
+            if (touchEndX > touchStartX + 50) {
+                changeSlide(-1);
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</body>
+</html>
